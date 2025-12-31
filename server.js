@@ -38,9 +38,17 @@ app.use(express.json());
 app.use("/bus", busRoutes);
 
 app.get("/all", async (req, res) => {
-  const buses = await Bus.find();
-  res.json(buses);
+  try {
+    const buses = await Bus.find().sort({ updatedAt: -1 });
+    res.json(buses);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
 });
+
 
 app.listen(port, () =>
   console.log(`Server running on port ${port}`)
