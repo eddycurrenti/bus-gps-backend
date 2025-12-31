@@ -1,5 +1,5 @@
 import Bus from "../model/temp2.js";
-import BusLocation from "../model/temp.js";
+import BusLocation from "../model/Bus1.js";
 
 const uploadLocation = async (req, res) => {
   try {

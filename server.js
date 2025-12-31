@@ -28,7 +28,7 @@ dotenv.config();
 import express from "express";
 import connectDB from "./config/db.js";
 import busRoutes from "./routes/buslocarionUpdate.js";
-import Bus from "./model/Bus.js";
+import Bus from "./model/Bus1.js";
 
 const app = express();
 const port = process.env.PORT || 4000;
