@@ -50,19 +50,25 @@ app.get("/all", async (req, res) => {
   }
 });
 
-app.get("/active-buses", async (req,res)=>{
+app.get("/active-buses", async (req, res) => {
   try {
-    const fifteensec = new Date(Date.now()-15000);
+    const ACTIVE_WINDOW_MS = 15000; // 15 seconds
+
+    const since = new Date(Date.now() - ACTIVE_WINDOW_MS);
 
     const buses = await Bus.find({
-      updatedAt: { $gte : fifteensec}
-    });
+      updatedAt: { $gte: since },
+    }).lean();
 
     res.json(buses);
   } catch (error) {
-    res.status(500).json({error: error.message});
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
   }
-})
+});
+
 
 app.listen(port, () =>
   console.log(`Server running on port ${port}`)
