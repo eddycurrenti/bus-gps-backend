@@ -50,6 +50,19 @@ app.get("/all", async (req, res) => {
   }
 });
 
+app.get("/active-buses", async (req,res)=>{
+  try {
+    const fifteensec = new Date(Date.now()-15000);
+
+    const buses = await Bus.find({
+      updatedAt: { $gte : fifteensec}
+    });
+
+    res.json(buses);
+  } catch (error) {
+    res.status(500).json({error: error.message});
+  }
+})
 
 app.listen(port, () =>
   console.log(`Server running on port ${port}`)
