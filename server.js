@@ -38,6 +38,11 @@ connectDB();
 app.use(express.json());
 app.use("/bus", busRoutes);
 
+app.use('/', (req,res) => {
+  res.send("Welcome to my Buss live website");
+});
+
+
 app.get("/all", async (req, res) => {
   try {
     const buses = await Bus.find().sort({ updatedAt: -1 });
