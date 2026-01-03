@@ -1,27 +1,4 @@
-// import express from "express";
-// import apl from "./routes/buslocarionUpdate.js";
-// import buses from "./store/buses.js";
-// import connectDB from "./config/db.js";
-
-// connectDB();
-
-// const app =  express();
-// const port = process.env.PORT || 4000
-
-// app.use(express.json());
-
-// app.use('/bus',apl)
-// app.get('/all', (req,res)=>{
-//     res.json(Object.values(buses));
-// })
-
-// app.get('/',(req,res)=>{
-//     res.send("API working");
-// })
-
-
-// app.listen(port , ()=>console.log('Started on port :'+port))
-
+import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -29,13 +6,37 @@ import express from "express";
 import connectDB from "./config/db.js";
 import busRoutes from "./routes/buslocarionUpdate.js";
 import Bus from "./model/temp2.js";
+import http from "http";
+import { Server } from "socket.io";
 
 const app = express();
 const port = process.env.PORT || 4000;
+const server = http.createServer(app);
+
+app.use(cors({
+  origin: "http://localhost:3000",
+  methods: ["GET", "POST"],
+}));
+
+app.use(express.json());
+
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+app.set("io", io);
 
 connectDB();
 
-app.use(express.json());
+
+
+io.on("connection", (socket) => {
+  console.log("Client connected:", socket.id);
+});
+
 app.use("/bus", busRoutes);
 
 app.get("/all", async (req, res) => {
@@ -51,25 +52,12 @@ app.get("/all", async (req, res) => {
 });
 
 app.get("/active-buses", async (req, res) => {
-  try {
-    const ACTIVE_WINDOW_MS = 15000; // 15 seconds
-
-    const since = new Date(Date.now() - ACTIVE_WINDOW_MS);
-
-    const buses = await Bus.find({
-      updatedAt: { $gte: since },
-    }).lean();
-
-    res.json(buses);
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      error: error.message,
-    });
-  }
+  const since = new Date(Date.now() - 15000);
+  const buses = await Bus.find({ updatedAt: { $gte: since } });
+  res.json(buses);
 });
 
 
-app.listen(port, () =>
-  console.log(`Server running on port ${port}`)
-);
+server.listen(10000, () => {
+  console.log("Server running on 10000");
+});
