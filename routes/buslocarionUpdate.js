@@ -1,8 +1,9 @@
-import express from 'express'
-import { uploadLocation } from '../controllers/upload.js';
+import express from "express";
+import { uploadLocation, getBusHistory } from "../controllers/upload.js";
 
-const apl = express.Router();
+const router = express.Router();
 
-apl.post('/upload',uploadLocation);
+router.post("/upload", uploadLocation);
+router.get("/history/:busId", getBusHistory); // 👈 NEW
 
-export default apl
+export default router;
